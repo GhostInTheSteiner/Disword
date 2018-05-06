@@ -10,6 +10,8 @@ elementInfo = {}
 nextPageLink = ""
 nextPageSelector = ""
 
+self = this
+
 exports.setOptions = (Param_NextPageSelector, Param_NextPageLink, Param_elementInfo) => {
     nextPageSelector = Param_NextPageSelector
     nextPageLink = Param_NextPageLink

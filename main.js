@@ -5,6 +5,7 @@ tableObjectFactory = require("./tableObjectFactory.js")
 log = require("./log.js")
 connection = require("./connection.js")
 database = require("./database")
+formatFunctionManager = require("./formatFunctionManager")
 
 currentPage = 0
 config = {}
