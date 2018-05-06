@@ -1,0 +1,16 @@
+{
+    "scrapedPage": "http://reddit.com",
+    "tableName": "reddit",
+    "databaseName": "reddit",
+    "elementInfo":
+        { 
+            "title": ".title.may-blank",
+            "author": ".author",
+            "community": ".subreddit",
+            "likes": ".score.likes",  
+            "comments": ".comments"
+        },
+    "maxPages": 4,
+    "nextPageSelector": ".next-button a",
+    "loadPageDelay": 100
+}
