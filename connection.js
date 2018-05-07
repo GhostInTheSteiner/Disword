@@ -1,8 +1,10 @@
 jquery = require("jquery")
 jsdom = require('jsdom')
-log = require("./log.js")
 request = require('request')
 tubo = require('tubo')
+
+formatFunctionManager = require("./formatFunctionManager")
+log = require("./log.js")
 
 $ = {}
 
@@ -81,15 +83,20 @@ function getJqueryByHtml(html) {
 }
 
 function getElementGroups(elementInfo) {
+    var formatElementValue = formatFunctionManager.formatElementValue
+
     var elementGroupValuesJquery
     var elementGroups = {}
 
     for (elementInfoName in elementInfo) {
         elementGroups[elementInfoName] = []
-        elementGroupValuesJquery = $(elementInfo[elementInfoName])
 
-        for (var elementGroupValueHtml of elementGroupValuesJquery)
+        elementInfoValue = elementInfo[elementInfoName]
+        elementGroupValuesJquery = $(elementInfoValue)
+        
+        for (var elementGroupValueHtml of elementGroupValuesJquery) {
             elementGroups[elementInfoName].push(elementGroupValueHtml.textContent)
+        }
     }
 
     return elementGroups
