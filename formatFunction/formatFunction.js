@@ -1,6 +1,6 @@
-var formatFunctionBuilder = require("./formatFunctionBuilder")
-var formatFunctionList = require("./formatFunctionList")
-var formatFunctionManager = require("./formatFunctionManager")
+var formatFunctionBuilder = require("./formatFunctionBuilder.js")
+var formatFunctionList = require("./formatFunctionList.js")
+var formatFunctionManager = require("./formatFunctionManager.js")
 
 var builtFunctionStr
 var functionStr
@@ -12,12 +12,13 @@ exports.init = (Param_functionStr) => {
     selectorStr = extractSelector()
 }
 
-function build(selectorResultStr)
-    formatFunctionBuilder.replaceSelectorWithResult(functionStr, selectorStr, selectorResultStr)
+function build(selectorResultStr) {
+    return formatFunctionBuilder.replaceSelectorWithResult(functionStr, selectorStr, selectorResultStr)
+}
 
-exports.isFormatFunction = () =>
+exports.isFormatFunction = (textStr) =>
     formatFunctionManager.functionNames.filter(functionName =>
-        functionStr.startsWith(functionName)).length > 1
+        textStr.startsWith(functionName)).length > 0
 
 function extractSelector() {
     var openingBracketIndex = functionStr.indexOf("(")

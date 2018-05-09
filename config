@@ -4,7 +4,7 @@
     "databaseName": "reddit",
     "elementInfo":
         { 
-            "title": ".title.may-blank",
+            "title": "slice(.title.may-blank, 0, 4)",
             "author": ".author",
             "community": ".subreddit",
             "likes": ".score.likes",  

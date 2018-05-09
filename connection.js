@@ -3,7 +3,7 @@ jsdom = require('jsdom')
 request = require('request')
 tubo = require('tubo')
 
-formatFunction = require("./formatFunction.js")
+formatFunction = require("./formatFunction/formatFunction.js")
 log = require("./log.js")
 
 $ = {}
