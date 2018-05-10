@@ -3,7 +3,8 @@
     "tableName": "reddit",
     "databaseName": "reddit",
     "elementInfo":
-        { 
+        {
+            "karma": ".userHref|.profileHref|.karma"
             "title": "slice(.title.may-blank, 0, 4)",
             "author": ".author",
             "community": ".subreddit",

@@ -1,10 +1,10 @@
 fileStream = require('fs')
 tubo = require('tubo')
 
-tableObjectFactory = require("./tableObjectFactory.js")
-log = require("./log.js")
-connection = require("./connection.js")
-database = require("./database")
+tableObjectFactory = require("./modules/tableObjectFactory.js")
+log = require("./modules/log.js")
+connection = require("./modules/connection.js")
+database = require("./modules/database.js")
 
 currentPage = 0
 config = {}

@@ -1,10 +1,12 @@
 jquery = require("jquery")
 jsdom = require('jsdom')
+requestSync = require('request-sync')
 request = require('request')
 tubo = require('tubo')
 
 formatFunction = require("./formatFunction/formatFunction.js")
 log = require("./log.js")
+selectorLinkPath = require("./selectorLinkPath.js")
 
 $ = {}
 
@@ -55,18 +57,6 @@ function getNextPageLink(selectorJquery) {
     return $(selectorJquery).attr("href")
 }
 
-function fetchNextPageHtml(urlStr, callback) {
-    log.write.info("fetchNextPageHtml was called.")
-    
-    setTimeout(() => {
-            log.write.info("setTimeout callback was called.")
-            request.get(urlStr, (err, data) => {
-                tubo(getValidHtml(err, data), callback)
-            })
-        },
-        config.loadPageDelay)
-    }
-
 function isMessedHtml(html) {
     log.write.info("isMessedHtml was called.")        
 
@@ -82,36 +72,53 @@ function getJqueryByHtml(html) {
     return jquery(window);
 }
 
+function getJqueryByUrlSync(urlStr) {
+    return getJqueryByHtml(requestSync.get("GET", urlStr).getBody())
+}
+
+function followSelectorLinks(selectorLinkPath) {
+    var currentPageJquery = $
+
+    while (selectorLinkPath.hasSelectorLink()) {
+        currentPageJquery = getJqueryByUrlSync(currentPageJquery(selectorLinkPath.getNextSelectorLink()).text())
+    }
+
+    return currentPageJquery(selectorLinkPath.elementSelector).text()
+}
+
 function getElementGroups(elementInfo) {
-    var elementGroupValuesJquery
+    var elementSelectorIsFormatFunction
+    var elementSelector
     var elementGroups = {}
-    var valueIsFormatFunction
-    var selectorStr
-    var elementGroupValueHtmlText
+    var selectorLinkPathStr
 
     for (elementInfoName in elementInfo) {
         elementGroups[elementInfoName] = []
 
-        elementInfoValue = elementInfo[elementInfoName]
+        selectorLinkPath.init(elementInfo[elementInfoName])
 
-        valueIsFormatFunction = formatFunction.isFormatFunction(elementInfoValue)
+        elementSelector = selectorLinkPath.getElementSelector()
+        elementSelectorIsFormatFunction = formatFunction.isFormatFunction(elementSelector)
 
-        if (valueIsFormatFunction) {
-            formatFunction.init(elementInfoValue)
-            selectorStr = formatFunction.getSelector()
-
-            elementGroupValuesJquery = $(selectorStr)
-        } else
-            elementGroupValuesJquery = $(elementInfoValue)
-
-        for (var elementGroupValueHtml of elementGroupValuesJquery) {
-            elementGroupValueHtmlText = elementGroupValueHtml.textContent
-
-            if (valueIsFormatFunction)
-                elementGroupValueHtmlText = formatFunction.execute(elementGroupValueHtmlText)
-
-            elementGroups[elementInfoName].push(elementGroupValueHtmlText)
+        if (elementSelectorIsFormatFunction) {
+            formatFunction.init(elementSelector)
+            elementSelector = formatFunction.getSelector()
         }
+
+        elementSelectorValues = $(elementSelector)
+
+        for (var elementSelectorValue of elementSelectorValues) {
+            if (selectorLinkPath.isOnlySelector()) {
+                if (elementSelectorIsFormatFunction)
+                    elementGroups[elementInfoName].push(formatFunction.execute(elementSelectorValue))
+                else
+                    elementGroups[elementInfoName].push(elementSelectorValue.text())                    
+            } else {
+                elementGroups[elementInfoName].push(followSelectorLinks(selectorLinkPath.getSelectorLinkPathStr()))
+            }
+        }
+
+
     }
 
     return elementGroups
