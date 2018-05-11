@@ -13,7 +13,7 @@ tableObject = []
 fileStream.readFile("config", start)
 
 function beginDataScrap() {
-    connection.setOptions(config.nextPageSelector, config.scrapedPage, config.elementInfo)
+    connection.init(config.nextPageSelector, config.scrapedPage, config.elementInfo)
     connection.scrapElementGroups(processElementGroups)
 }
 

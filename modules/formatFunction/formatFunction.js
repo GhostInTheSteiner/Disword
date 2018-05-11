@@ -1,6 +1,6 @@
 var formatFunctionBuilder = require("./formatFunctionBuilder.js")
 var formatFunctionList = require("./formatFunctionList.js")
-var formatFunctionManager = require("./formatFunctionManager.js")
+var formatFunctionListManager = require("./formatFunctionListManager.js")
 
 var builtFunctionStr
 var functionStr
@@ -17,7 +17,7 @@ function build(selectorResultStr) {
 }
 
 exports.isFormatFunction = (textStr) =>
-    formatFunctionManager.functionNames.filter(functionName =>
+    formatFunctionListManager.functionNames.filter(functionName =>
         textStr.startsWith(functionName)).length > 0
 
 function extractSelector() {
@@ -32,4 +32,4 @@ function extractSelector() {
 exports.getSelector = () => selectorStr
 
 exports.execute = (selectorResultStr) =>
-    formatFunctionManager.execute(build(selectorResultStr))
+    formatFunctionListManager.execute(build(selectorResultStr))
