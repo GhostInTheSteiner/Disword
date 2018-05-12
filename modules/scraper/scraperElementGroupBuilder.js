@@ -1,12 +1,17 @@
-scraperJqueryFactory = require("./scraperJqueryFactory.js")
-requestSync = require('request-sync')
+var requestSync = require('sync-request')
 
+var selectorLinkPath = require("./selectorLinkPath/selectorLinkPath.js")
+var formatFunction = require("./formatFunction/formatFunction.js")
+var scraperJqueryFactory = require("./scraperJqueryFactory.js")
+var log = require("../log.js")
+
+var pageBaseUrl
 var elementInfo
 var $
 
-exports.init = (Param_elementInfo) => {
+exports.init = (Param_elementInfo, Param_pageBaseUrl) => {
     elementInfo = Param_elementInfo
-    $ = Param_$
+    pageBaseUrl = Param_pageBaseUrl
 }
 
 exports.updateJquery = (jquery) => {
@@ -27,13 +32,11 @@ exports.getElementGroups = () => {
         selectorLinkPath.init(elementInfo[elementInfoName])
 
         elementSelector = selectorLinkPath.getElementSelector()
-        selectorLinks = selectorLinkPath.getSelectorLinks()
         
         elementSelectorIsFormatFunction = formatFunction.isFormatFunction(elementSelector)
-        elementSelectorIsPath = selectorLinkPath.hasSelectorLink()
 
         //".userHref|slice(.karma, 0, 4)" || ".userHref|.karma"
-        if (elementSelectorIsPath)
+        if (selectorLinkPath.hasSelectorLink())
             elementSelectorValues = getLinkedPagesValues(selectorLinkPath)
         else
             elementSelectorValues = $(elementSelector)
@@ -52,37 +55,61 @@ exports.getElementGroups = () => {
 }
 
 function getLinkedPagesValues(selectorLinkPath) {
-    var firstSelectorLink = selectorLinkPath.getNextSelectorLink()
+    log.write.warning("Starting to scrap further pages links, this will take some time.")    
+
+    var firstSelectorLink = selectorLinkPath.getSelectorLinks()[0]
     var firstPageSelectorLinkValues = $(firstSelectorLink).toArray()
     var values = []
+    var href
+    var selectorLinkCurrent = 0
+
+    log.write.info(firstPageSelectorLinkValues.length + " links to further pages existant.")
 
     for (var firstPageSelectorLinkValue of firstPageSelectorLinkValues) {
-        var urlStr = firstPageSelectorLinkValue.attr("href")
-        values.push(followSelectorLinks(selectorLinkPath, urlStr))
+        selectorLinkPathIterator = selectorLinkPath.getIterator() 
+        selectorLinkPathIterator.next()       
+        href = firstPageSelectorLinkValue.href
+        urlStr = getFullUrl(href)
+        values.push(followOtherSelectorLinks(selectorLinkPathIterator, selectorLinkPath, urlStr))
+
+        log.write.info(++selectorLinkCurrent + ". link was scraped.")    
     }
 }
 
 //returns the jquery object containing the first found element of the defined elementSelector
-function followSelectorLinks(selectorLinkPath, urlStr) {
+function followOtherSelectorLinks(selectorLinkPathIterator, selectorLinkPath, urlStr) {
     var currentPage = {
-        html,
-        jquery,
+        html: null,
+        jquery: null,
         selectorLink: {
-            Str,
-            Value
+            str: null,
+            value: null
         }
     }
 
-    while (selectorLinkPath.hasSelectorLink()) {
-        currentPage.html = requestSync.get("GET", urlStr).getBody()
+    var selectorLinkPathIteratorItem
+
+    while ((selectorLinkPathIteratorItem = selectorLinkPathIterator.next()).value) {
+        currentPage.html = requestSync("GET", urlStr).getBody()
 
         currentPage.jquery = scraperJqueryFactory.getJqueryByHtml(currentPage.html)
-        currentPage.selectorLink.Str = selectorLinkPath.getNextSelectorLink()
+        currentPage.selectorLink.str = selectorLinkPathIteratorItem.value
 
-        currentPage.selectorLink.Value = currentPage.jquery(currentPage.selectorLink.Str).first()
+        currentPage.selectorLink.value = currentPage.jquery(currentPage.selectorLink.str)[0]
 
-        urlStr = currentPage.selectorLink.Value.attr("href")
+        urlStr = getFullUrl(currentPage.selectorLink.value.href)
     }
 
+    
+    currentPage.html = requestSync("GET", urlStr).getBody()    
+    currentPage.jquery = scraperJqueryFactory.getJqueryByHtml(currentPage.html)
+
     return currentPage.jquery(selectorLinkPath.getElementSelector()).first().text()
+}
+
+function getFullUrl(href) {
+    if (href.startsWith("http"))
+        return href
+    else
+        return pageBaseUrl + href
 }

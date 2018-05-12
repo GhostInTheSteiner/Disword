@@ -1,23 +1,26 @@
-request = require('request')
-tubo = require('tubo')
+var request = require('request')
+var tubo = require('tubo')
 
-formatFunction = require("./formatFunction/formatFunction.js")
-selectorLinkPath = require("./selectorLinkPath/selectorLinkPath.js")
-scraperElementGroupBuilder = require("./scraperElementGroupBuilder.js")
-scraperJqueryFactory = require("./scraperJqueryFactory.js")
+var formatFunction = require("./formatFunction/formatFunction.js")
+var selectorLinkPath = require("./selectorLinkPath/selectorLinkPath.js")
 
-$ = {}
+var scraperElementGroupBuilder = require("./scraperElementGroupBuilder.js")
+var scraperJqueryFactory = require("./scraperJqueryFactory.js")
 
-elementInfo = {}
-nextPageLink = ""
-nextPageSelector = ""
+var $ = {}
+
+var elementInfo = {}
+var nextPageLink = ""
+var nextPageSelector = ""
 
 exports.init = (Param_NextPageSelector, Param_NextPageLink, Param_elementInfo) => {
     nextPageSelector = Param_NextPageSelector
     nextPageLink = Param_NextPageLink
     elementInfo = Param_elementInfo
 
-    scraperElementGroupBuilder.init(elementInfo)
+    var pageBaseUrl = nextPageLink.match(/^.+?[^\/:](?=[?\/]|$)/)[0]
+
+    scraperElementGroupBuilder.init(elementInfo, pageBaseUrl)
 }
 
 exports.scrapElementGroups = (callback) => {
@@ -30,6 +33,7 @@ exports.scrapElementGroups = (callback) => {
         else {
             $ = scraperJqueryFactory.getJqueryByHtml(data.body)
             scraperElementGroupBuilder.updateJquery($)
+            nextPageLink = getNextPageLink(nextPageSelector)
             callback(scraperElementGroupBuilder.getElementGroups())
         }
     })
@@ -43,5 +47,5 @@ function isMessedHtml(html) {
 }
 
 function getNextPageLink(selectorJquery) {
-    return $(selectorJquery).attr("href")
+    return $(selectorJquery)[0].href
 }

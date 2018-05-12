@@ -1,10 +1,10 @@
 {
-    "scrapedPage": "http://reddit.com",
+    "scrapedPage": "http://old.reddit.com",
     "tableName": "reddit",
     "databaseName": "reddit",
     "elementInfo":
         {
-            "karma": ".userHref|.profileHref|.karma"
+            "karma": ".comments|.top-matter .author|.karma",
             "title": "slice(.title.may-blank, 0, 4)",
             "author": ".author",
             "community": ".subreddit",

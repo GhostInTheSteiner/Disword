@@ -3,7 +3,7 @@ tubo = require('tubo')
 
 tableObjectFactory = require("./modules/tableObjectFactory.js")
 log = require("./modules/log.js")
-connection = require("./modules/connection.js")
+scraper = require("./modules/scraper/scraper.js")
 database = require("./modules/database.js")
 
 currentPage = 0
@@ -13,8 +13,8 @@ tableObject = []
 fileStream.readFile("config", start)
 
 function beginDataScrap() {
-    connection.init(config.nextPageSelector, config.scrapedPage, config.elementInfo)
-    connection.scrapElementGroups(processElementGroups)
+    scraper.init(config.nextPageSelector, config.scrapedPage, config.elementInfo)
+    scraper.scrapElementGroups(processElementGroups)
 }
 
 function start(err, data) {
@@ -38,7 +38,7 @@ function processElementGroups(elementGroups) {
     if (currentPage < config.maxPages) {
         log.write.group("Finished fetching data of " + currentPage + ". page, moving on with the next one.")
         
-        connection.scrapElementGroups(processElementGroups)    
+        scraper.scrapElementGroups(processElementGroups)    
     } else {
         log.write.group("Finished fetching data of last one, writing it to database now.")        
 
