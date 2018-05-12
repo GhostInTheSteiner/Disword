@@ -2,8 +2,8 @@ request = require('request')
 tubo = require('tubo')
 
 formatFunction = require("./formatFunction/formatFunction.js")
-selectorLinkPath = require("./selectorLinkPath.js")
-scraperElementGroupBuilder = require("./scraperElementGroupBuilder")
+selectorLinkPath = require("./selectorLinkPath/selectorLinkPath.js")
+scraperElementGroupBuilder = require("./scraperElementGroupBuilder.js")
 scraperJqueryFactory = require("./scraperJqueryFactory.js")
 
 $ = {}
@@ -17,6 +17,7 @@ exports.init = (Param_NextPageSelector, Param_NextPageLink, Param_elementInfo) =
     nextPageLink = Param_NextPageLink
     elementInfo = Param_elementInfo
 
+    scraperElementGroupBuilder.init(elementInfo)
 }
 
 exports.scrapElementGroups = (callback) => {
@@ -28,8 +29,8 @@ exports.scrapElementGroups = (callback) => {
         }   
         else {
             $ = scraperJqueryFactory.getJqueryByHtml(data.body)
-            scraperElementGroupBuilder.init($, elementInfo)
-            callback(scraperElementGroupBuilder.getNextElementGroups())
+            scraperElementGroupBuilder.updateJquery($)
+            callback(scraperElementGroupBuilder.getElementGroups())
         }
     })
 

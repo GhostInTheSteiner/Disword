@@ -1,3 +1,4 @@
+jquery = require("jquery")
 jsdom = require('jsdom')
 
 exports.getJqueryByHtml = (html) => {

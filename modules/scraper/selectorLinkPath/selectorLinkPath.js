@@ -18,5 +18,10 @@ exports.getNextSelectorLink = () =>
 exports.hasSelectorLink = () =>
     selectorLinks.length > 0
 
+exports.getSelectorLinks = () => selectorLinks
+
+exports.getElementSelector = () =>
+    elementSelector
+
 exports.isOnlySelector = () =>
     selectorLinks.length == 0
