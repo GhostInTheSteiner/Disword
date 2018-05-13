@@ -27,5 +27,8 @@ exports.getSelectorLinks = () => selectorLinks
 exports.getElementSelector = () =>
     elementSelector
 
+exports.setElementSelector = (Param_elementSelector) =>
+    elementSelector = Param_elementSelector
+
 exports.isOnlySelector = () =>
     selectorLinks.length == 0

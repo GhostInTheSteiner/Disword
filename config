@@ -4,14 +4,14 @@
     "databaseName": "reddit",
     "elementInfo":
         {
-            "karma": ".comments|.top-matter .author|.karma",
-            "title": "slice(.title.may-blank, 0, 4)",
+            "karma": ".author|slice(.karma, 0, 4)",
+            "title": ".title.may-blank",
             "author": ".author",
             "community": ".subreddit",
             "likes": ".score.likes",  
             "comments": ".comments"
         },
-    "maxPages": 4,
+    "maxPages": 1,
     "nextPageSelector": ".next-button a",
     "loadPageDelay": 100
 }
