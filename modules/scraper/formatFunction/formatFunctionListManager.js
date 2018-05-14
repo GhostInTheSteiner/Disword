@@ -1,18 +1,25 @@
+esprima = require("esprima")
+
 var formatFunctionList = require("./formatFunctionList")
 
 var formatFunctions = formatFunctionList.items
 
 exports.execute = (builtFormatFunction) => {
+    var builtFormatFunctionTokenized
 
-    for (var formatFunction in formatFunctions) {
-        if (builtFormatFunction.startsWith(formatFunction)) {
-            var openingBracketIndex = builtFormatFunction.indexOf("(")
-            var closingBracketIndex = builtFormatFunction.indexOf(")")
+    for (var formatFunctionName in formatFunctions) {
+        builtFormatFunctionTokenized = esprima.tokenize(builtFormatFunction)
 
-            var argumentStr = builtFormatFunction.slice(openingBracketIndex + 1, closingBracketIndex)
-            var argumentArray = argumentStr.split(",").map(value => value.trim())
-            
-            return formatFunctions[formatFunction](...argumentArray)
+        builtFormatFunctionName = builtFormatFunctionTokenized[0].value
+        
+        builtFormatFunctionParamTokens = builtFormatFunctionTokenized.slice(2, builtFormatFunctionTokenized.length - 1)
+        
+        var currentToken = 0
+
+        builtFormatFunctionParams = builtFormatFunctionParamTokens.filter(token => currentToken++ % 2 == 0).map(token => token.value)
+
+        if (builtFormatFunctionName == formatFunctionName) {
+            return formatFunctions[formatFunctionName](...builtFormatFunctionParams)
         }
     }
 }

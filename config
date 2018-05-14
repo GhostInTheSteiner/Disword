@@ -4,7 +4,7 @@
     "databaseName": "reddit",
     "elementInfo":
         {
-            "karma": ".author|slice(.karma, 0, 4)",
+            "karma": "slice('.author', 0, 1)",
             "title": ".title.may-blank",
             "author": ".author",
             "community": ".subreddit",

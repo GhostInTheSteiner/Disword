@@ -1,3 +1,5 @@
+var esprima = require("esprima")
+
 var formatFunctionBuilder = require("./formatFunctionBuilder.js")
 var formatFunctionList = require("./formatFunctionList.js")
 var formatFunctionListManager = require("./formatFunctionListManager.js")
@@ -21,11 +23,10 @@ exports.isFormatFunction = (textStr) =>
         textStr.startsWith(functionName)).length > 0
 
 function extractSelector() {
-    var openingBracketIndex = functionStr.indexOf("(")
-    var commaIndex = functionStr.indexOf(",")
-        
-    var selectorStr = functionStr.slice(openingBracketIndex + 1, commaIndex)
-        
+    var functionStrTokenized = esprima.tokenize(functionStr)
+    var selectorStrQuoted = functionStrTokenized[2].value
+    var selectorStr = selectorStrQuoted.slice(1, selectorStrQuoted.length - 1)
+
     return selectorStr
 }
 

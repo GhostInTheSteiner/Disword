@@ -1,10 +1,6 @@
-var selectorLinkPathIterator = require('./selectorLinkPathIterator.js')
-
 var selectorLinkPath
 var elementSelector
 var selectorLinks
-
-var selectorLinksIterator
 
 exports.init = (Param_selectorLinkPath) => {
     var selectorLinkPathGroups = Param_selectorLinkPath.split("|")
@@ -20,7 +16,7 @@ exports.hasSelectorLink = () =>
     selectorLinks.length > 0
 
 exports.getIterator = () =>
-    selectorLinksIterator = selectorLinks[Symbol.iterator]()
+    selectorLinks[Symbol.iterator]()
 
 exports.getSelectorLinks = () => selectorLinks
 
