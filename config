@@ -1,17 +1,16 @@
 {
-    "scrapedPage": "http://old.reddit.com",
-    "tableName": "reddit",
-    "databaseName": "reddit",
-    "elementInfo":
+    "scrapedPage": "http://old.reddit.com", #url of the page to scrap data from
+    "tableName": "reddit", #name of the table
+    "databaseName": "reddit", #name of the database
+    "elementInfo": #the selectors with their desired field names in the table they're going to be saved to
         {
-            "karma": "slice('.author', 0, 1)",
-            "title": ".title.may-blank",
-            "author": ".author",
+            "title": "slice(replace('.title.may-blank', 'e', 'f'), 0, 10)", #calls multiple formatFunctions, to 'clean' data before importing (e.g. replacing 'k' with '000')
+            "author": ".author", #simply fetches data from the '.author' selector
             "community": ".subreddit",
-            "likes": ".score.likes",  
+            "votes": ".author|replace('.karma', 'k', '00')", #defines a site "path", basically it's looking for the selector '.karma' on the page behind the '.author' selector
             "comments": ".comments"
         },
-    "maxPages": 1,
-    "nextPageSelector": ".next-button a",
-    "loadPageDelay": 100
+    "maxPages": 1, #defines the maximum pages to fetch data from
+    "nextPageSelector": ".next-button a", #selector being the link to the next page
+    "loadPageDelay": 100 #a delay to load pages to avoid getting blocked from DDOS protection (might not be necessary most times since it'll take some time to load a page anyway)
 }

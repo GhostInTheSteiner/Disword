@@ -15,7 +15,10 @@ exports.init = (Param_functionStr) => {
 }
 
 function build(selectorResultStr) {
-    return formatFunctionBuilder.replaceSelectorWithResult(functionStr, selectorStr, selectorResultStr)
+    var functionStrWithResult = formatFunctionBuilder.replaceSelectorWithResult(functionStr, selectorStr, selectorResultStr)
+    var functionStrWithResultAndThis = formatFunctionBuilder.addThisBeforeFunctionName(functionStrWithResult, formatFunctionListManager.functionNames)
+
+    return functionStrWithResultAndThis
 }
 
 exports.isFormatFunction = (textStr) =>
@@ -23,8 +26,7 @@ exports.isFormatFunction = (textStr) =>
         textStr.startsWith(functionName)).length > 0
 
 function extractSelector() {
-    var functionStrTokenized = esprima.tokenize(functionStr)
-    var selectorStrQuoted = functionStrTokenized[2].value
+    var selectorStrQuoted = esprima.tokenize(functionStr).filter(token => token.value.match(/'.*'/))[0].value
     var selectorStr = selectorStrQuoted.slice(1, selectorStrQuoted.length - 1)
 
     return selectorStr
